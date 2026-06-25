@@ -73,50 +73,7 @@ ZONE_NAMES = {
 # ── Load and process data ──────────────────────────────────
 @st.cache_data
 def load_data():
-    health, mh = pyreadstat.read_dta('2022nlss_sect03_health.dta')
-    cover,  mc = pyreadstat.read_dta('2022nlss_sect00_cover.dta')
-    income, mi = pyreadstat.read_dta('2022nlss_sect13_other_income.dta')
-
-    # OOP spending
-    oop_cols = ['s3q14', 's3q15', 's3q18a', 's3q21a']
-    health[oop_cols] = health[oop_cols].fillna(0)
-    health['oop_total'] = health[oop_cols].sum(axis=1)
-    hh_health = health.groupby('hhid')['oop_total'].sum().reset_index()
-    hh_health.columns = ['hhid', 'oop_health_spending']
-
-    # Income
-    income['s13q2'] = income['s13q2'].fillna(0)
-    hh_income = income.groupby('hhid')['s13q2'].sum().reset_index()
-    hh_income.columns = ['hhid', 'total_income']
-
-    # Merge
-    df = cover[['hhid','zone','state','sector']].copy()
-    df = df.merge(hh_health, on='hhid', how='left')
-    df = df.merge(hh_income, on='hhid', how='left')
-    df['oop_health_spending'] = df['oop_health_spending'].fillna(0)
-    df['total_income']        = df['total_income'].fillna(0)
-    df['area'] = df['sector'].map({1:'Urban', 2:'Rural'})
-
-    df_valid = df[
-        (df['total_income'] > 0) &
-        (df['oop_health_spending'] >= 0)
-    ].copy()
-
-    df_valid['oop_burden_pct'] = (
-        df_valid['oop_health_spending'] /
-        df_valid['total_income'] * 100
-    ).clip(upper=100)
-
-    df_valid['income_quintile'] = pd.qcut(
-        df_valid['total_income'], q=5,
-        labels=['Q1 (Poorest)','Q2','Q3','Q4','Q5 (Richest)']
-    )
-    df_valid['catastrophic'] = (
-        df_valid['oop_burden_pct'] > 10
-    ).astype(int)
-    df_valid['state_name'] = df_valid['state'].map(STATE_NAMES)
-    df_valid['zone_name']  = df_valid['zone'].map(ZONE_NAMES)
-
+    df_valid = pd.read_csv('oop_processed_data.csv')
     return df_valid
 
 with st.spinner("Loading NLSS 2022 data..."):
