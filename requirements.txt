@@ -3,3 +3,4 @@ pandas
 numpy
 pyreadstat
 scikit-learn
+plotly
