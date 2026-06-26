@@ -36,13 +36,13 @@ and how heavy is it?**
 Without answering that question with data, policy remains guesswork.
 
 ### Data Analysis
-Used the NLSS 2022 microdata from Nigeria's National Bureau of Statistics —
+Used the NLSS 2022 microdata from Nigeria's National Bureau of Statistics,
 covering 22,607 households across all 36 states and FCT Abuja. Extracted
 four direct out-of-pocket spending variables (consultation fees, drug purchases,
 hospital stays, transport costs), aggregated to household level, merged with
 household income data, and calculated OOP burden as a percentage of income.
 
-Built two machine learning models: Logistic Regression and Random Forest —
+Built two machine learning models: Logistic Regression and Random Forest was built
 to predict which households are at risk of catastrophic health expenditure
 before it happens.
 
